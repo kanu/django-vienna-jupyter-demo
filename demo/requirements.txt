@@ -1,0 +1,9 @@
+ipython
+requests
+django
+django_extensions
+jupyter
+numpy
+pandas
+django-pandas
+matplotlib
