@@ -3,8 +3,6 @@ import logging
 from requests import Response
 from time import sleep, time
 
-from .models import MeetupGroup, MeetupEvent, MeetupMember
-
 
 logger = logging.getLogger()
 API_HOST = "https://api.meetup.com"
@@ -21,6 +19,7 @@ class Client(requests.Session):
     Client for the meetup api with a simple strategy to stay within the rate
     limit.
     """
+
     def __init__(self, api_key: str):
         super().__init__()
         self.api_key = api_key
@@ -34,16 +33,20 @@ class Client(requests.Session):
             params["key"] = self.api_key
 
         if self.rate_limit_exceeded:
-            timeout = self.rate_limit_until  - time()
+            timeout = self.rate_limit_until - time()
             if timeout > 0:
-                logger.info("Meetup Api rate limit exceeded. waiting %s seconds", timeout)
+                logger.info(
+                    "Meetup Api rate limit exceeded. waiting %s seconds", timeout
+                )
                 sleep(timeout)
                 self.rate_limit_exceeded = False
 
         response = super().request(method, url, **kwargs)
         if int(response.headers["X-RateLimit-Remaining"]) <= 0:
             self.rate_limit_exceeded = True
-            self.rate_limit_until = time() + int(response.headers["X-RateLimit-Reset"]) + 1
+            self.rate_limit_until = (
+                time() + int(response.headers["X-RateLimit-Reset"]) + 1
+            )
         if response.status_code != 200:
             raise RequestException(response)
 

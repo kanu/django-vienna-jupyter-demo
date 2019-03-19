@@ -7,3 +7,7 @@ numpy
 pandas
 django-pandas
 matplotlib
+pydotplus
+seaborn
+wordcloud
+html2text
